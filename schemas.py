@@ -7,6 +7,6 @@ class Answers(BaseModel):
     project_path: str
     package_manager: Literal["pip", "poetry", "uv"]
     python_version: str
-    source_folder: Literal["./src", "./app", "root (current directory)"]
+    source_folder: Literal["root", "src", "app"]
     framework: Literal["None", "FastAPI"]
     libraries: list[str]

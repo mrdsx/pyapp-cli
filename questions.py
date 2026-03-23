@@ -19,8 +19,8 @@ questions = [
     {
         "type": "list",
         "name": "source_folder",
-        "message": "Choose the source code folder",
-        "choices": ["./src", "./app", "root (current directory)"],
+        "message": "Choose the source code folder (root - project folder)",
+        "choices": ["root", "src", "app"],
     },
     {
         "type": "list",
@@ -33,6 +33,7 @@ questions = [
         "name": "libraries",
         "message": "Choose the libraries",
         "choices": [
+            "gunicorn",
             "uvicorn",
             "sqlalchemy",
             "firebase-admin",

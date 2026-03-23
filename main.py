@@ -1,7 +1,7 @@
 import os
+from pathlib import Path
 import shutil
 import subprocess
-import sys
 
 import fire
 from InquirerPy import prompt
@@ -16,11 +16,8 @@ class ProjectGenerator:
         answers = Answers.model_validate(raw_answers)
 
         # generate project folder
-        try:
-            print(f"Creating folder '{answers.project_path}'.")
-            os.mkdir(answers.project_path)
-        except FileExistsError:
-            pass
+        print(f"Creating folder '{answers.project_path}'.")
+        Path(answers.project_path).mkdir(exist_ok=True)
 
         # install package manager if not installed
         if answers.package_manager == "poetry":
@@ -75,6 +72,16 @@ class ProjectGenerator:
                     stderr=subprocess.DEVNULL,
                 )
                 print("uv is installed.")
+
+        # create main.py file
+        python_file = None
+        if answers.source_folder == "root":
+            python_file = Path(answers.project_path, "main.py")
+        else:
+            python_file = Path(answers.project_path, answers.source_folder, "main.py")
+        python_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(python_file, "w"):
+            pass
 
 
 if __name__ == "__main__":
