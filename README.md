@@ -16,13 +16,7 @@ Before setting up new project, install Python and appropriate package manager yo
 - poetry
 - uv
 
-Use `main.py init` command to run the CLI:
-
-```bash
-python main.py init              # python interpreter
-poetry run python main.py init   # poetry
-uv run main.py init              # uv
-```
+Use `uvx pyapp-cli` command with `uv` package manager to run the CLI without saving it.
 
 Alertnatively, you can use python3 prefix when running command.
 
