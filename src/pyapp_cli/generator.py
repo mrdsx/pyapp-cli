@@ -26,14 +26,14 @@ class ProjectGenerator:
         raw_answers = prompt(questions)
         answers = Answers.model_validate(raw_answers)
 
-        self._create_project_folder(answers.project_path, answers.source_folder)
-
         if answers.package_manager == "pip":
             self._ensure_pip_installation()
         elif answers.package_manager == "poetry":
             self._ensure_poetry_installation()
         elif answers.package_manager == "uv":
             self._ensure_uv_installation()
+
+        self._create_project_folder(answers.project_path, answers.source_folder)
 
         if answers.framework == "None" or answers.framework in self._no_cli_frameworks:
             self._create_main_file(answers.source_folder, answers.framework)

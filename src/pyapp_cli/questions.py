@@ -1,4 +1,7 @@
-questions = [
+from typing import Any
+
+
+questions: list[dict[str, Any]] = [
     {
         "type": "input",
         "name": "project_path",
