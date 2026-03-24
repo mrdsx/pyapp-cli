@@ -46,7 +46,7 @@ class ProjectGenerator:
         if answers.package_manager == "pip":
             self._pip_setup_project(dependencies)
         elif answers.package_manager == "poetry":
-            self._poetry_setup_project(dependencies)
+            self._poetry_setup_project(dependencies, answers.python_version)
         elif answers.package_manager == "uv":
             self._uv_setup_project(dependencies, answers.python_version)
 
@@ -149,9 +149,11 @@ class ProjectGenerator:
                 f.write(result.stdout)
             self._logger.success("Saved dependencies to requirements.txt")
 
-    def _poetry_setup_project(self, dependencies: list[str]) -> None:
+    def _poetry_setup_project(
+        self, dependencies: list[str], python_version: str
+    ) -> None:
         subprocess.check_call(
-            ["poetry", "init", "-n"],
+            ["poetry", "init", "-n", f"--python={python_version}"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
@@ -173,7 +175,7 @@ class ProjectGenerator:
 
     def _uv_setup_project(self, dependencies: list[str], python_version: str) -> None:
         subprocess.check_call(
-            ["uv", "init", "--bare", "--no-workspace"],
+            ["uv", "init", "--bare", "--no-workspace", "--python", python_version],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
