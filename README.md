@@ -16,9 +16,9 @@ Before setting up new project, install Python and appropriate package manager yo
 - poetry
 - uv
 
-Use `uvx pyapp-cli` command with `uv` package manager to run the CLI without saving it.
+## How to run
 
-Alertnatively, you can use python3 prefix when running command.
+Install uv package manager. Then, run `uvx pyapp-cli@latest init` to use the CLI.
 
 ## Contributing
 
