@@ -17,7 +17,7 @@ questions: list[dict[str, Any]] = [
         "type": "input",
         "name": "python_version",
         "message": "Enter Python version",
-        "default": "3.12",
+        "default": ">=3.12",
     },
     {
         "type": "list",
