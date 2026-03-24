@@ -5,12 +5,11 @@ import subprocess
 import sys
 from typing import Literal
 
-import fire
 from InquirerPy import prompt
 
-from logger import Logger
-from questions import questions
-from schemas import Answers
+from .logger import Logger
+from .questions import questions
+from .schemas import Answers
 
 venv_dir = ".venv"
 
@@ -208,7 +207,3 @@ class ProjectGenerator:
         subprocess.check_call(
             [*django_util, "startproject", "mysite", "."],
         )
-
-
-if __name__ == "__main__":
-    fire.Fire(ProjectGenerator(logger=Logger()))
