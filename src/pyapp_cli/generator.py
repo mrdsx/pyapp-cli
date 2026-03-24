@@ -5,8 +5,9 @@ import subprocess
 import sys
 from typing import Literal
 
-from InquirerPy import prompt
+from InquirerPy import prompt  # type: ignore
 
+from .templates import templates
 from .logger import Logger
 from .questions import questions
 from .schemas import Answers
@@ -16,8 +17,7 @@ venv_dir = ".venv"
 
 class ProjectGenerator:
     # frameworks without built-in CLI for scaffolding the project
-    _framework_packages = set(["FastAPI", "Flask"])
-    _templates_dir = os.path.abspath("templates")
+    _no_cli_frameworks = set(["FastAPI", "Flask"])
 
     def __init__(self, logger: Logger) -> None:
         self._logger = logger
@@ -35,7 +35,7 @@ class ProjectGenerator:
         elif answers.package_manager == "uv":
             self._ensure_uv_installation()
 
-        if answers.framework == "None" or answers.framework in self._framework_packages:
+        if answers.framework == "None" or answers.framework in self._no_cli_frameworks:
             self._create_main_file(answers.source_folder, answers.framework)
 
         dependencies = answers.libraries
@@ -103,16 +103,7 @@ class ProjectGenerator:
         python_file.parent.mkdir(parents=True, exist_ok=True)
         self._logger.log("Added main.py")
 
-        project_template = None
-        try:
-            template_path = os.path.join(
-                self._templates_dir, f"{self._framework_id(framework)}.py"
-            )
-            with open(template_path, "r") as template_file:
-                project_template = template_file.read()
-            self._logger.log(f"Applied {self._framework_id(framework)} template")
-        except FileNotFoundError:
-            pass
+        project_template = templates.get(self._framework_id(framework))
 
         with open(python_file, "w") as f:
             if project_template is not None:
