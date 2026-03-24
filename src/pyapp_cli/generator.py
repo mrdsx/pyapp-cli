@@ -33,7 +33,8 @@ class ProjectGenerator:
         elif answers.package_manager == "uv":
             self._ensure_uv_installation()
 
-        self._create_project_folder(answers.project_path, answers.source_folder)
+        escaped_path = self._escape_project_path(answers.project_path)
+        self._create_project_folder(escaped_path, answers.source_folder)
 
         if answers.framework == "None" or answers.framework in self._no_cli_frameworks:
             self._create_main_file(answers.source_folder, answers.framework)
@@ -53,6 +54,11 @@ class ProjectGenerator:
             self._django_setup_project(answers.package_manager, answers.source_folder)
 
         self._logger.success("Finished! Enjoy the project :)")
+
+    def _escape_project_path(self, path: str) -> str:
+        if path.strip() == "":
+            return "."
+        return path
 
     def _framework_id(self, framework: str) -> str:
         return framework.lower()
