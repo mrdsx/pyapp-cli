@@ -41,7 +41,7 @@ class ProjectGenerator:
 
         dependencies = answers.libraries
         if answers.framework != "None":
-            dependencies.append(self._framework_id(answers.framework))
+            dependencies.append(self._get_framework_id(answers.framework))
 
         if answers.package_manager == "pip":
             self._pip_setup_project(dependencies)
@@ -60,7 +60,12 @@ class ProjectGenerator:
             return "."
         return path
 
-    def _framework_id(self, framework: str) -> str:
+    def _get_python_executable_path(self) -> str:
+        if sys.platform == "win32":
+            return os.path.abspath(os.path.join(venv_dir, "Scripts", "python.exe"))
+        return os.path.abspath(os.path.join(venv_dir, "bin", "python3"))
+
+    def _get_framework_id(self, framework: str) -> str:
         return framework.lower()
 
     def _missing_dependency_message(self, dependency: str) -> str:
@@ -109,7 +114,7 @@ class ProjectGenerator:
         python_file.parent.mkdir(parents=True, exist_ok=True)
         self._logger.log("Added main.py")
 
-        project_template = templates.get(self._framework_id(framework))
+        project_template = templates.get(self._get_framework_id(framework))
 
         with open(python_file, "w") as f:
             if project_template is not None:
@@ -130,9 +135,7 @@ class ProjectGenerator:
 
         if len(dependencies) > 0:
             self._logger.log("Installing dependencies...")
-            python_executable = os.path.abspath(
-                os.path.join(venv_dir, "bin", "python3")
-            )
+            python_executable = self._get_python_executable_path()
             subprocess.check_call(
                 [python_executable, "-m", "pip", "install", *dependencies],
             )
@@ -192,11 +195,8 @@ class ProjectGenerator:
     def _django_setup_project(
         self, package_manager: Literal["pip", "poetry", "uv"], source_folder: str
     ) -> None:
-        python_executable = os.path.abspath(os.path.join(venv_dir, "bin", "python3"))
+        python_executable = self._get_python_executable_path()
         django_util = [python_executable, "-m", "django"]
-        if package_manager == "uv":
-            django_util = ["uv", "run", "django-admin"]
-        self._logger.log("Initialized Django project")
 
         if source_folder != "root":
             os.chdir(source_folder)
@@ -204,3 +204,4 @@ class ProjectGenerator:
         subprocess.check_call(
             [*django_util, "startproject", "mysite", "."],
         )
+        self._logger.log("Initialized Django project")
