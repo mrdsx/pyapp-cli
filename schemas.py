@@ -8,5 +8,5 @@ class Answers(BaseModel):
     package_manager: Literal["pip", "poetry", "uv"]
     python_version: str
     source_folder: Literal["root", "src", "app"]
-    framework: Literal["None", "FastAPI"]
+    framework: Literal["None", "FastAPI", "Flask", "Django"]
     libraries: list[str]

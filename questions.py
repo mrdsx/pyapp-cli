@@ -26,7 +26,7 @@ questions = [
         "type": "list",
         "name": "framework",
         "message": "Choose the framework",
-        "choices": ["None", "FastAPI"],
+        "choices": ["None", "FastAPI", "Flask", "Django"],
     },
     {
         "type": "checkbox",
@@ -40,6 +40,8 @@ questions = [
             "pydantic",
             "pydantic-settings",
             "pytest",
+            "pytest-asyncio",
+            "python-dotenv",
         ],
     },
 ]
