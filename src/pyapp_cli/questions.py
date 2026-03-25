@@ -3,6 +3,8 @@ from typing import Any, Union
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 
+from .schemas import Framework, PackageManager, SourceFolder
+
 package_manager_choices: list[str] = ["pip", "poetry", "uv"]
 source_folder_choices: list[dict[str, str]] = [
     {"value": "root", "name": "root folder"},
@@ -39,28 +41,53 @@ libraries_choices: list[Union[str, Separator]] = [
 
 
 class Questions:
-    def prompt(self) -> dict[str, Any]:
-        project_path = inquirer.text(message="Enter the project path").execute()  # type: ignore
-        package_manager = inquirer.select(  # type: ignore
-            message="Choose the package manager",
-            choices=package_manager_choices,
-        ).execute()
-        python_version = inquirer.text(  # type: ignore
-            message="Enter Python version",
-            default=">=3.12",
-        ).execute()
-        source_folder = inquirer.select(  # type: ignore
-            message="Choose the source code folder",
-            choices=source_folder_choices,
-        ).execute()
-        framework = inquirer.select(  # type: ignore
-            message="Choose the framework",
-            choices=frameworks_choices,
-        ).execute()
-        libraries = inquirer.checkbox(  # type: ignore
-            message="Choose the libraries",
-            choices=libraries_choices,
-        ).execute()
+    def prompt(
+        self,
+        project_path: str | None,
+        package_manager: PackageManager | None,
+        python_version: str | None,
+        source_folder: SourceFolder | None,
+        framework: Framework | None,
+        libraries: list[str] | None,
+    ) -> dict[str, Any]:
+        if project_path is None:
+            project_path = inquirer.text(  # pyright: ignore[reportPrivateImportUsage]
+                message="Enter the project path"
+            ).execute()
+
+        if package_manager is None:
+            package_manager = (
+                inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
+                    message="Choose the package manager",
+                    choices=package_manager_choices,
+                ).execute()
+            )
+
+        if python_version is None:
+            python_version = inquirer.text(  # pyright: ignore[reportPrivateImportUsage]
+                message="Enter Python version",
+                default="3.12",
+            ).execute()
+
+        if source_folder is None:
+            source_folder = (
+                inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
+                    message="Choose the source code folder",
+                    choices=source_folder_choices,
+                ).execute()
+            )
+
+        if framework is None:
+            framework = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
+                message="Choose the framework",
+                choices=frameworks_choices,
+            ).execute()
+
+        if libraries is None:
+            libraries = inquirer.checkbox(  # pyright: ignore[reportPrivateImportUsage]
+                message="Choose the libraries",
+                choices=libraries_choices,
+            ).execute()
 
         raw_answers: dict[str, Any] = {
             "project_path": project_path,

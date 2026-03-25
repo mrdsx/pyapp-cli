@@ -7,9 +7,9 @@ license = { file = "LICENSE" }
 requires-python = ">=3.12,<4.0"
 dependencies = [
     "colorama>=0.4.6",
-    "fire>=0.7.1",
     "inquirerpy>=0.3.4",
     "pydantic>=2.12.5",
+    "typer>=0.24.1",
 ]
 
 [project.scripts]

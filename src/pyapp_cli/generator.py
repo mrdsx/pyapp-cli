@@ -1,21 +1,20 @@
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 from pydantic import ValidationError
 
-from pyapp_cli.questions import Questions
-
 from .templates import templates
 from .logger import Logger
-from .schemas import Answers, Framework, SourceFolder
+from .schemas import Answers, Framework, PackageManager, SourceFolder
+from .questions import Questions
 
 VENV_DIR = ".venv"
 
 
-class CLI:
+class ProjectGenerator:
     # frameworks without built-in CLI for scaffolding the project
     _no_cli_frameworks: set[Framework] = set(["fastapi", "flask"])
     _stdout: int | None
@@ -26,7 +25,16 @@ class CLI:
         self._logger = logger
         self._questions = questions
 
-    def init(self, verbose: bool = False) -> None:
+    def init(
+        self,
+        verbose: bool,
+        project_path: str | None,
+        package_manager: PackageManager | None,
+        python_version: str | None,
+        source_folder: SourceFolder | None,
+        framework: Framework | None,
+        libraries: list[str] | None,
+    ) -> None:
         if type(verbose) is not bool:
             self._logger.error("Invalid type of argument 'verbose'")
             exit(2)
@@ -37,11 +45,18 @@ class CLI:
         self._logger.debug(f"Verbose logging: {self._logger.verbose}")
 
         try:
-            raw_answers = self._questions.prompt()
+            raw_answers = self._questions.prompt(
+                project_path=project_path,
+                package_manager=package_manager,
+                python_version=python_version,
+                source_folder=source_folder,
+                framework=framework,
+                libraries=libraries,
+            )
             answers = Answers(**raw_answers)
-        except ValidationError as error:
+        except (TypeError, ValidationError) as error:
             self._logger.error("Invalid project params")
-            self._logger.debug(str(error))
+            self._logger.debug(f"Error: {error}")
             exit(1)
         except KeyboardInterrupt:
             self._logger.error("Project setup has been interrupted")
@@ -152,7 +167,6 @@ class CLI:
         self._logger.log("Added main.py")
 
         project_template = templates.get(framework or "")
-        self._logger.debug(f"Project template:\n{project_template}")
         with open(python_file, "w") as f:
             if project_template is not None:
                 f.write(project_template)
@@ -191,7 +205,7 @@ class CLI:
         self, dependencies: list[str], python_version: str
     ) -> None:
         subprocess.check_call(
-            ["poetry", "init", "-n", f"--python={python_version}"],
+            ["poetry", "init", "-n", f"--python=>={python_version}"],
             stdout=self._stdout,
             stderr=self._stdout,
         )
@@ -214,10 +228,19 @@ class CLI:
 
     def _uv_setup_project(self, dependencies: list[str], python_version: str) -> None:
         subprocess.check_call(
-            ["uv", "init", "--bare", "--no-workspace", "--python", python_version],
+            [
+                "uv",
+                "init",
+                "--bare",
+                "--no-workspace",
+                "--python",
+                f"{python_version}",
+            ],
             stdout=self._stdout,
             stderr=self._stdout,
         )
+        with open(".python-version", "w") as f:
+            f.write(python_version)
         self._logger.log("Initialized uv project")
 
         if len(dependencies) > 0:
