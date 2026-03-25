@@ -181,9 +181,6 @@ class ProjectGenerator:
         )
         self._logger.log("Initialized uv project")
 
-        with open(".python-version", "w") as f:
-            f.write(python_version)
-
         if len(dependencies) > 0:
             self._logger.log("Installing dependencies...")
             subprocess.check_call(
