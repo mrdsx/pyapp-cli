@@ -51,7 +51,7 @@ class ProjectGenerator:
             self._uv_setup_project(dependencies, answers.python_version)
 
         if answers.framework == "Django":
-            self._django_setup_project(answers.package_manager, answers.source_folder)
+            self._django_setup_project(answers.source_folder)
 
         self._logger.success("Finished! Enjoy the project :)")
 
@@ -191,9 +191,7 @@ class ProjectGenerator:
                 ],
             )
 
-    def _django_setup_project(
-        self, package_manager: Literal["pip", "poetry", "uv"], source_folder: str
-    ) -> None:
+    def _django_setup_project(self, source_folder: str) -> None:
         python_executable = self._get_python_executable_path()
         django_util = [python_executable, "-m", "django"]
 
