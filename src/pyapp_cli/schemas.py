@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-Framework = Literal["FastAPI", "Flask", "Django"]
+Framework = Literal["fastapi", "flask", "django"]
 PackageManager = Literal["pip", "poetry", "uv"]
 SourceFolder = Literal["root", "src", "app"]
 

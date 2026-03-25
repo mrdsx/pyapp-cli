@@ -35,7 +35,12 @@ questions: list[dict[str, Any]] = [
         "type": "list",
         "name": "framework",
         "message": "Choose the framework",
-        "choices": ["None", "FastAPI", "Flask", "Django"],
+        "choices": [
+            {"value": None, "name": "None"},
+            {"value": "fastapi", "name": "FastAPI"},
+            {"value": "flask", "name": "Flask"},
+            {"value": "django", "name": "Django"},
+        ],
     },
     {
         "type": "checkbox",

@@ -11,17 +11,26 @@ from .logger import Logger
 from .questions import questions
 from .schemas import Answers, Framework, SourceFolder
 
-venv_dir = ".venv"
+VENV_DIR = ".venv"
 
 
 class ProjectGenerator:
-    # frameworks without built-in CLI for scaffolding the project
-    _no_cli_frameworks = set(["FastAPI", "Flask"])
+    # frameworks                     without built-in CLI for scaffolding the project
+    _no_cli_frameworks: set[str] = set(["FastAPI", "Flask"])
+    _stdout: int | None
+    _logger: Logger
 
     def __init__(self, logger: Logger) -> None:
         self._logger = logger
 
-    def init(self):
+    def init(self, verbose: bool = False) -> None:
+        if type(verbose) is not bool:
+            self._logger.error("Invalid type of argument 'verbose'")
+            exit(2)
+
+        self._stdout = None if verbose else subprocess.DEVNULL
+        self._logger.verbose = verbose
+
         raw_answers = prompt(questions)
         answers = Answers.model_validate(raw_answers)
 
@@ -40,8 +49,10 @@ class ProjectGenerator:
 
         dependencies = answers.libraries
         if answers.framework is not None:
-            dependencies.append(self._get_framework_id(answers.framework))
+            dependencies.append(answers.framework)
+        self._logger.debug(f"Selected dependencies: {dependencies}")
 
+        self._logger.debug(f"Package manager: {answers.package_manager}")
         if answers.package_manager == "pip":
             self._pip_setup_project(dependencies)
         elif answers.package_manager == "poetry":
@@ -49,25 +60,30 @@ class ProjectGenerator:
         elif answers.package_manager == "uv":
             self._uv_setup_project(dependencies, answers.python_version)
 
-        if answers.framework == "Django":
+        if answers.framework == "django":
             self._django_setup_project(answers.source_folder)
 
         self._logger.success("Finished! Enjoy the project :)")
 
     def _escape_project_path(self, path: str) -> str:
+        result = path
         if path.strip() == "":
-            return "."
-        return path
+            result = "."
+
+        self._logger.debug(f"Escaped project path with result '{result}'")
+        return result
 
     def _get_python_executable_path(self) -> str:
+        executable = None
         if sys.platform == "win32":
-            return os.path.abspath(os.path.join(venv_dir, "Scripts", "python.exe"))
-        return os.path.abspath(os.path.join(venv_dir, "bin", "python3"))
+            executable = os.path.abspath(
+                os.path.join(VENV_DIR, "Scripts", "python.exe")
+            )
+        else:  # most likely Linux / Darwin (MacOS)
+            executable = os.path.abspath(os.path.join(VENV_DIR, "bin", "python3"))
 
-    def _get_framework_id(self, framework: Framework | None) -> str:
-        if framework is None:
-            return ""
-        return framework.lower()
+        self._logger.debug(f"Python executable: {executable}")
+        return executable
 
     def _missing_dependency_message(self, dependency: str) -> str:
         return (
@@ -78,9 +94,13 @@ class ProjectGenerator:
     def _create_project_folder(
         self, project_path: str, source_folder: SourceFolder
     ) -> None:
+        self._logger.debug(f"Creating folder at '{project_path}'...")
         Path(project_path).mkdir(exist_ok=True)
         if source_folder != "root":
             Path(project_path, source_folder).mkdir(exist_ok=True)
+            self._logger.debug(
+                f"Created source folder at '{os.path.join(project_path, source_folder)}'"
+            )
         os.chdir(project_path)
         self._logger.log(f"Created folder '{project_path}'")
 
@@ -119,11 +139,14 @@ class ProjectGenerator:
         python_file.parent.mkdir(parents=True, exist_ok=True)
         self._logger.log("Added main.py")
 
-        project_template = templates.get(self._get_framework_id(framework))
+        if framework is None:
+            return
 
+        project_template = templates.get(framework)
         with open(python_file, "w") as f:
             if project_template is not None:
                 f.write(project_template)
+        self._logger.debug(f"Created {framework} template")
 
     def _pip_setup_project(self, dependencies: list[str]) -> None:
         self._logger.log("Creating virtual environment...")
@@ -132,10 +155,10 @@ class ProjectGenerator:
                 sys.executable,
                 "-m",
                 "venv",
-                os.path.join(venv_dir),
+                os.path.join(VENV_DIR),
             ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stdout=self._stdout,
+            stderr=self._stdout,
         )
 
         if len(dependencies) > 0:
@@ -159,8 +182,8 @@ class ProjectGenerator:
     ) -> None:
         subprocess.check_call(
             ["poetry", "init", "-n", f"--python={python_version}"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stdout=self._stdout,
+            stderr=self._stdout,
         )
         self._logger.log("Initialized poetry project")
 
@@ -168,7 +191,8 @@ class ProjectGenerator:
             self._logger.log("Installing dependencies...")
             custom_env = os.environ.copy()
             custom_env["POETRY_VIRTUALENVS_IN_PROJECT"] = "true"
-            custom_env["VIRTUAL_ENV"] = os.path.abspath(venv_dir)
+            custom_env["VIRTUAL_ENV"] = os.path.abspath(VENV_DIR)
+            self._logger.debug(f"Virtual environment: {custom_env["VIRTUAL_ENV"]}")
             subprocess.check_call(
                 [
                     "poetry",
@@ -181,8 +205,8 @@ class ProjectGenerator:
     def _uv_setup_project(self, dependencies: list[str], python_version: str) -> None:
         subprocess.check_call(
             ["uv", "init", "--bare", "--no-workspace", "--python", python_version],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stdout=self._stdout,
+            stderr=self._stdout,
         )
         self._logger.log("Initialized uv project")
 
@@ -202,6 +226,7 @@ class ProjectGenerator:
 
         if source_folder != "root":
             os.chdir(source_folder)
+            self._logger.debug(f"Set working directory to '{source_folder}'...")
 
         subprocess.check_call(
             [*django_util, "startproject", "mysite", "."],
