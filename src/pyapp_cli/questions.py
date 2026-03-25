@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Literal, Union
 
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
@@ -49,6 +49,7 @@ class Questions:
         source_folder: SourceFolder | None,
         framework: Framework | None,
         libraries: list[str] | None,
+        no_libraries: Literal[True] | None,
     ) -> dict[str, Any]:
         if project_path is None:
             project_path = inquirer.text(  # pyright: ignore[reportPrivateImportUsage]
@@ -83,8 +84,15 @@ class Questions:
                 choices=frameworks_choices,
             ).execute()
 
-        if libraries is None:
-            libraries = inquirer.checkbox(  # pyright: ignore[reportPrivateImportUsage]
+        _libraries = libraries
+        if no_libraries is True and libraries is not None:
+            raise TypeError(
+                "Cannot set 'no_libraries' and 'libraries' at the same time"
+            )
+        elif no_libraries is True and libraries is None:
+            _libraries = []
+        elif no_libraries is None and libraries is None:
+            _libraries = inquirer.checkbox(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the libraries",
                 choices=libraries_choices,
             ).execute()
@@ -95,7 +103,7 @@ class Questions:
             "python_version": python_version,
             "source_folder": source_folder,
             "framework": framework,
-            "libraries": libraries,
+            "libraries": _libraries,
         }
 
         return raw_answers

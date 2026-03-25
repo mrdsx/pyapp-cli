@@ -1,3 +1,5 @@
+from typing import Literal
+
 import typer
 
 from .generator import ProjectGenerator
@@ -18,6 +20,7 @@ def init(
     source_folder: SourceFolder | None = None,
     framework: Framework | None = None,
     libraries: list[str] | None = None,
+    no_libraries: Literal[True] | None = None,
 ) -> None:
     project_generator.init(
         verbose=verbose,
@@ -27,11 +30,12 @@ def init(
         source_folder=source_folder,
         framework=framework,
         libraries=libraries,
+        no_libraries=no_libraries,
     )
 
 
 @app.command()
-def dummy() -> None:
+def hello() -> None:
     print("Hello, World!")
 
 

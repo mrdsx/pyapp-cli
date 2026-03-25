@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Literal
 
 from pydantic import ValidationError
 
@@ -34,6 +35,7 @@ class ProjectGenerator:
         source_folder: SourceFolder | None,
         framework: Framework | None,
         libraries: list[str] | None,
+        no_libraries: Literal[True] | None,
     ) -> None:
         if type(verbose) is not bool:
             self._logger.error("Invalid type of argument 'verbose'")
@@ -52,6 +54,7 @@ class ProjectGenerator:
                 source_folder=source_folder,
                 framework=framework,
                 libraries=libraries,
+                no_libraries=no_libraries,
             )
             answers = Answers(**raw_answers)
         except (TypeError, ValidationError) as error:
