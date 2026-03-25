@@ -2,11 +2,11 @@
 
 ## About
 
-PyApp CLI is a powerful tool that makes python project setup painless. With this CLI you can easily scaffold FastAPI, Flask or Django project with all necessary dependencies.
+PyApp CLI is a powerful unopinionated tool that makes python project setup painless. With this CLI you can easily scaffold a project with all necessary dependencies or you can even automate project setup.
 
 ## Supported platforms
 
-The CLI can be run on Ubuntu Linux, but it's not guaranteed the CLI will work on other platforms.
+The CLI was tested on Ununtu Linux and Windows. Other systems may be incompatible.
 
 ## Get started
 
@@ -20,7 +20,13 @@ Before setting up new project, install Python and appropriate package manager yo
 
 Install uv package manager. Then, run `uvx pyapp-cli@latest init`.
 
-## Params
+## Documentation
+
+### Boilerplate
+
+The PyApp CLI can reduce initial setup time by providing tiny templates. If you choose specific framework (like FastAPI or Flask), your project will contain minimal boilerplate to start with.
+
+### Params
 
 Since v0.3.0 PyApp CLI supports params, so the CLI won't ask you about some settings. It can be useful when automating project creation.
 
@@ -60,4 +66,4 @@ Important notice: `--no-libraries` and `libraries` arguments can't be used toget
 
 ## Contributing
 
-Feel free to open an issue if you have found a bug, have a feature request or you want to expand list of available libraries/frameworks/package managers. You also can open PR if you wish.
+Feel free to open an issue if you have found a bug, have a feature request or you want to expand list of available templates/libraries/frameworks/package managers. You also can open PR if you wish.
