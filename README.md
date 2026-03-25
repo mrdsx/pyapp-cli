@@ -18,7 +18,7 @@ Before setting up new project, install Python and appropriate package manager yo
 
 ## How to run
 
-Install uv package manager. Then, run `uvx pyapp-cli@latest init` to use the CLI.
+Install uv package manager. Then, run `uvx pyapp-cli@latest init`.
 
 ## Contributing
 
