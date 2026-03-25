@@ -1,5 +1,7 @@
 from typing import Any
 
+from InquirerPy.separator import Separator
+
 
 questions: list[dict[str, Any]] = [
     {
@@ -22,7 +24,7 @@ questions: list[dict[str, Any]] = [
     {
         "type": "list",
         "name": "source_folder",
-        "message": "Choose the source code folder (root - project folder)",
+        "message": "Choose the source code folder",
         "choices": ["root", "src", "app"],
     },
     {
@@ -36,15 +38,25 @@ questions: list[dict[str, Any]] = [
         "name": "libraries",
         "message": "Choose the libraries",
         "choices": [
+            Separator(),
             "gunicorn",
             "uvicorn",
+            Separator(),
             "sqlalchemy",
+            "sqlmodel",
+            "tortoise-orm",
             "firebase-admin",
+            "supabase",
+            Separator(),
             "pydantic",
             "pydantic-settings",
             "pytest",
             "pytest-asyncio",
-            "python-dotenv",
+            Separator(),
+            "ruff",
+            "black",
+            "flake8",
+            "pylint",
         ],
     },
 ]
