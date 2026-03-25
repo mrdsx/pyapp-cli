@@ -3,14 +3,13 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
-from typing import Literal
 
 from InquirerPy import prompt  # type: ignore
 
 from .templates import templates
 from .logger import Logger
 from .questions import questions
-from .schemas import Answers
+from .schemas import Answers, Framework, SourceFolder
 
 venv_dir = ".venv"
 
@@ -36,11 +35,11 @@ class ProjectGenerator:
         escaped_path = self._escape_project_path(answers.project_path)
         self._create_project_folder(escaped_path, answers.source_folder)
 
-        if answers.framework == "None" or answers.framework in self._no_cli_frameworks:
+        if answers.framework is None or answers.framework in self._no_cli_frameworks:
             self._create_main_file(answers.source_folder, answers.framework)
 
         dependencies = answers.libraries
-        if answers.framework != "None":
+        if answers.framework is not None:
             dependencies.append(self._get_framework_id(answers.framework))
 
         if answers.package_manager == "pip":
@@ -65,7 +64,9 @@ class ProjectGenerator:
             return os.path.abspath(os.path.join(venv_dir, "Scripts", "python.exe"))
         return os.path.abspath(os.path.join(venv_dir, "bin", "python3"))
 
-    def _get_framework_id(self, framework: str) -> str:
+    def _get_framework_id(self, framework: Framework | None) -> str:
+        if framework is None:
+            return ""
         return framework.lower()
 
     def _missing_dependency_message(self, dependency: str) -> str:
@@ -74,7 +75,9 @@ class ProjectGenerator:
             f"Ensure {dependency} is installed and then run the script again."
         )
 
-    def _create_project_folder(self, project_path: str, source_folder: str) -> None:
+    def _create_project_folder(
+        self, project_path: str, source_folder: SourceFolder
+    ) -> None:
         Path(project_path).mkdir(exist_ok=True)
         if source_folder != "root":
             Path(project_path, source_folder).mkdir(exist_ok=True)
@@ -105,7 +108,9 @@ class ProjectGenerator:
             self._logger.error(self._missing_dependency_message("uv"))
             exit(127)
 
-    def _create_main_file(self, source_folder: str, framework: str) -> None:
+    def _create_main_file(
+        self, source_folder: SourceFolder, framework: Framework | None
+    ) -> None:
         python_file = None
         if source_folder == "root":
             python_file = Path("main.py")
@@ -191,7 +196,7 @@ class ProjectGenerator:
                 ],
             )
 
-    def _django_setup_project(self, source_folder: str) -> None:
+    def _django_setup_project(self, source_folder: SourceFolder) -> None:
         python_executable = self._get_python_executable_path()
         django_util = [python_executable, "-m", "django"]
 

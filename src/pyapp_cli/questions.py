@@ -25,7 +25,11 @@ questions: list[dict[str, Any]] = [
         "type": "list",
         "name": "source_folder",
         "message": "Choose the source code folder",
-        "choices": ["root", "src", "app"],
+        "choices": [
+            {"value": "root", "name": "root folder"},
+            {"value": "src", "name": "./src"},
+            {"value": "app", "name": "./app"},
+        ],
     },
     {
         "type": "list",
