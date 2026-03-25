@@ -4,24 +4,27 @@ import shutil
 import subprocess
 import sys
 
-from InquirerPy import prompt  # type: ignore
+from pydantic import ValidationError
+
+from pyapp_cli.questions import Questions
 
 from .templates import templates
 from .logger import Logger
-from .questions import questions
 from .schemas import Answers, Framework, SourceFolder
 
 VENV_DIR = ".venv"
 
 
-class ProjectGenerator:
-    # frameworks                     without built-in CLI for scaffolding the project
-    _no_cli_frameworks: set[str] = set(["FastAPI", "Flask"])
+class CLI:
+    # frameworks without built-in CLI for scaffolding the project
+    _no_cli_frameworks: set[Framework] = set(["fastapi", "flask"])
     _stdout: int | None
     _logger: Logger
+    _questions: Questions
 
-    def __init__(self, logger: Logger) -> None:
+    def __init__(self, logger: Logger, questions: Questions) -> None:
         self._logger = logger
+        self._questions = questions
 
     def init(self, verbose: bool = False) -> None:
         if type(verbose) is not bool:
@@ -30,9 +33,19 @@ class ProjectGenerator:
 
         self._stdout = None if verbose else subprocess.DEVNULL
         self._logger.verbose = verbose
+        self._logger.debug(f"stdout: {self._stdout}")
+        self._logger.debug(f"Verbose logging: {self._logger.verbose}")
 
-        raw_answers = prompt(questions)
-        answers = Answers.model_validate(raw_answers)
+        try:
+            raw_answers = self._questions.prompt()
+            answers = Answers(**raw_answers)
+        except ValidationError as error:
+            self._logger.error("Invalid project params")
+            self._logger.debug(str(error))
+            exit(1)
+        except KeyboardInterrupt:
+            self._logger.error("Project setup has been interrupted")
+            exit(1)
 
         if answers.package_manager == "pip":
             self._ensure_pip_installation()
@@ -74,15 +87,14 @@ class ProjectGenerator:
         return result
 
     def _get_python_executable_path(self) -> str:
-        executable = None
         if sys.platform == "win32":
             executable = os.path.abspath(
                 os.path.join(VENV_DIR, "Scripts", "python.exe")
             )
-        else:  # most likely Linux / Darwin (MacOS)
+        else:
             executable = os.path.abspath(os.path.join(VENV_DIR, "bin", "python3"))
 
-        self._logger.debug(f"Python executable: {executable}")
+        self._logger.debug(f"Current Python executable: {executable}")
         return executable
 
     def _missing_dependency_message(self, dependency: str) -> str:
@@ -139,14 +151,12 @@ class ProjectGenerator:
         python_file.parent.mkdir(parents=True, exist_ok=True)
         self._logger.log("Added main.py")
 
-        if framework is None:
-            return
-
-        project_template = templates.get(framework)
+        project_template = templates.get(framework or "")
+        self._logger.debug(f"Project template:\n{project_template}")
         with open(python_file, "w") as f:
             if project_template is not None:
                 f.write(project_template)
-        self._logger.debug(f"Created {framework} template")
+                self._logger.debug(f"Created {framework} template")
 
     def _pip_setup_project(self, dependencies: list[str]) -> None:
         self._logger.log("Creating virtual environment...")

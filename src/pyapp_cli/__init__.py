@@ -1,8 +1,9 @@
-import fire
+from fire import Fire  # type: ignore
 
-from .generator import ProjectGenerator
+from .cli import CLI
 from .logger import Logger
+from .questions import Questions
 
 
 def main() -> None:
-    fire.Fire(ProjectGenerator(logger=Logger()))
+    Fire(CLI(logger=Logger(), questions=Questions()))
