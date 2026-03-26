@@ -37,10 +37,6 @@ class ProjectGenerator:
         libraries: str | None,
         no_libraries: Literal[True] | None,
     ) -> None:
-        if type(verbose) is not bool:
-            self._logger.error("Invalid type of argument 'verbose'")
-            exit(2)
-
         self._stdout = None if verbose else subprocess.DEVNULL
         self._logger.verbose = verbose
         self._logger.debug(f"stdout: {self._stdout}")
