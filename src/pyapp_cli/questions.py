@@ -48,7 +48,7 @@ class Questions:
         python_version: str | None,
         source_folder: SourceFolder | None,
         framework: Framework | None,
-        libraries: list[str] | None,
+        libraries: str | None,
         no_libraries: Literal[True] | None,
     ) -> dict[str, Any]:
         if project_path is None:
@@ -96,6 +96,8 @@ class Questions:
                 message="Choose the libraries",
                 choices=libraries_choices,
             ).execute()
+        elif no_libraries is None and type(libraries) is str:
+            _libraries = libraries.split(",")
 
         raw_answers: dict[str, Any] = {
             "project_path": project_path,

@@ -4,8 +4,8 @@ import typer
 
 from .generator import ProjectGenerator
 from .logger import Logger
-from .schemas import Framework, PackageManager, SourceFolder
 from .questions import Questions
+from .schemas import Framework, PackageManager, SourceFolder
 
 app = typer.Typer()
 project_generator = ProjectGenerator(logger=Logger(), questions=Questions())
@@ -19,7 +19,7 @@ def init(
     python_version: str | None = None,
     source_folder: SourceFolder | None = None,
     framework: Framework | None = None,
-    libraries: list[str] | None = None,
+    libraries: str | None = None,
     no_libraries: Literal[True] | None = None,
 ) -> None:
     project_generator.init(

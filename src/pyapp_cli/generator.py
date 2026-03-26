@@ -7,10 +7,10 @@ from typing import Literal
 
 from pydantic import ValidationError
 
-from .templates import templates
 from .logger import Logger
-from .schemas import Answers, Framework, PackageManager, SourceFolder
 from .questions import Questions
+from .schemas import Answers, Framework, PackageManager, SourceFolder
+from .templates import templates
 
 VENV_DIR = ".venv"
 
@@ -34,7 +34,7 @@ class ProjectGenerator:
         python_version: str | None,
         source_folder: SourceFolder | None,
         framework: Framework | None,
-        libraries: list[str] | None,
+        libraries: str | None,
         no_libraries: Literal[True] | None,
     ) -> None:
         if type(verbose) is not bool:
