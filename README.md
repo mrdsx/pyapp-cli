@@ -54,9 +54,9 @@ Since v0.3.0 PyApp CLI supports params, so the CLI won't ask you about some sett
 - default: None
 - example: `uvx pyapp-cli init --framework=fastapi`
 
-#### `--libraries` - **list of strings or None**
+#### `--libraries` - **string or None**
 - default: None
-- example: `uvx pyapp-cli init --libraries=requests --libraries=pydantic`
+- example: `uvx pyapp-cli init --libraries=requests,pydantic`
 
 #### `--no-libraries` - **True or None** (False is not valid option)
 - default: None
