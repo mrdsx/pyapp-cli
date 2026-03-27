@@ -2,13 +2,13 @@ from typing import Literal
 
 import typer
 
-from .generator import ProjectGenerator
+from .generator import PyAppCLI
 from .logger import Logger
 from .questions import Questions
 from .schemas import Framework, PackageManager, SourceFolder
 
 app = typer.Typer()
-project_generator = ProjectGenerator(logger=Logger(), questions=Questions())
+pyapp_cli = PyAppCLI(logger=Logger(), questions=Questions())
 
 
 @app.command()
@@ -22,7 +22,7 @@ def init(
     libraries: str | None = None,
     no_libraries: Literal[True] | None = None,
 ) -> None:
-    project_generator.init(
+    pyapp_cli.init(
         verbose=verbose,
         project_path=project_path,
         package_manager=package_manager,
@@ -35,8 +35,8 @@ def init(
 
 
 @app.command()
-def hello() -> None:
-    print("Hello, World!")
+def version() -> None:
+    pyapp_cli.get_version()
 
 
 def main() -> None:

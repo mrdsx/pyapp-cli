@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from typing import Literal
 
+from colorama import Fore
 from pydantic import ValidationError
 
 from .logger import Logger
@@ -15,7 +16,7 @@ from .templates import templates
 VENV_DIR = ".venv"
 
 
-class ProjectGenerator:
+class PyAppCLI:
     # frameworks without built-in CLI for scaffolding the project
     _no_cli_frameworks: set[Framework] = set(["fastapi", "flask"])
     _stdout: int | None
@@ -91,6 +92,15 @@ class ProjectGenerator:
             self._django_setup_project(answers.source_folder)
 
         self._logger.success("Finished! Enjoy the project :)")
+
+    def get_version(self) -> None:
+        lib_version = subprocess.run(
+            ["uv", "version", "--short"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self._logger.log(f"PyApp CLI version: {Fore.CYAN + lib_version.stdout}", end="")
 
     def _escape_project_path(self, path: str) -> str:
         result = path
@@ -215,7 +225,7 @@ class ProjectGenerator:
             custom_env = os.environ.copy()
             custom_env["POETRY_VIRTUALENVS_IN_PROJECT"] = "true"
             custom_env["VIRTUAL_ENV"] = os.path.abspath(VENV_DIR)
-            self._logger.debug(f"Virtual environment: {custom_env["VIRTUAL_ENV"]}")
+            self._logger.debug(f"Virtual environment: {custom_env['VIRTUAL_ENV']}")
             subprocess.check_call(
                 [
                     "poetry",

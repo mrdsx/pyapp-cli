@@ -10,8 +10,8 @@ class Logger:
         if self.verbose:
             print(Style.DIM + f"[DEBUG] {message}")
 
-    def log(self, message: str) -> None:
-        print(message)
+    def log(self, message: str, end: str = "\n") -> None:
+        print(message, end=end)
 
     def success(self, message: str) -> None:
         print(Fore.GREEN + message)
