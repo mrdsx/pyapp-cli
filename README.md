@@ -26,43 +26,57 @@ Install uv package manager. Then, run `uvx pyapp-cli@latest init`.
 
 The PyApp CLI can reduce initial setup time by providing tiny templates. If you choose specific framework (like FastAPI or Flask), your project will contain minimal boilerplate to start with.
 
-### Params
+### Commands
 
-Since v0.3.0 PyApp CLI supports params, so the CLI won't ask you about some settings. It can be useful when automating project creation.
+#### `pyapp-cli init`
 
-#### `--verbose` - **boolean**
+Sets up new Python project.
+
+##### `--verbose` - **boolean**
+
 - default: false
 - example: `uvx pyapp-cli init --verbose`
 
-#### `--project-path` - **string**
+##### `--project-path` - **string**
+
 - default: empty string
 - example: `uvx pyapp-cli init --project-path=some-path`
 
-#### `--package-manager` - **literal string ("pip", "poetry" or "uv")**
+##### `--package-manager` - **literal string ("pip", "poetry" or "uv")**
+
 - default: pip
 - example: `uvx pyapp-cli init --package-manager=pip`
 
-#### `--python-version` - **string**
+##### `--python-version` - **string**
+
 - default: 3.12
 - example: `uvx pyapp-cli init --python-version=3.12`
 
-#### `--source-folder` - **string**
+##### `--source-folder` - **string**
+
 - default: root
 - example: `uvx pyapp-cli init --source-folder=root`
 
-#### `--framework` - **literal string ("fastapi", "flask" or "django") or None**
+##### `--framework` - **literal string ("fastapi", "flask" or "django") or None**
+
 - default: None
 - example: `uvx pyapp-cli init --framework=fastapi`
 
-#### `--libraries` - **string or None**
+##### `--libraries` - **string or None**
+
 - default: None
 - example: `uvx pyapp-cli init --libraries=requests,pydantic`
 
-#### `--no-libraries` - **True or None** (False is not valid option)
+##### `--no-libraries` - **True or None** (False is not valid option)
+
 - default: None
 - example: `uvx pyapp-cli init --no-libraries=True`
 
 Important notice: `--no-libraries` and `libraries` arguments can't be used together. You use either one or none of them.
+
+#### `pyapp-cli version`
+
+Outputs the package version.
 
 ## Contributing
 
