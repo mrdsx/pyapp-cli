@@ -10,7 +10,7 @@ The CLI was tested on Ununtu Linux and Windows. Other systems may be incompatibl
 
 ## Get started
 
-Before setting up new project, install Python and appropriate package manager you'll use for your project. PyAPP CLI supports following package managers:
+Before setting up new project, install Python and appropriate package manager you'll use for your project. PyApp CLI supports following package managers:
 
 - pip
 - poetry
