@@ -1,3 +1,4 @@
+import importlib.metadata
 import os
 import shutil
 import subprocess
@@ -94,13 +95,8 @@ class PyAppCLI:
         self._logger.success("Finished! Enjoy the project :)")
 
     def get_version(self) -> None:
-        lib_version = subprocess.run(
-            ["uv", "version", "--short"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        self._logger.log(f"PyApp CLI version: {Fore.CYAN + lib_version.stdout}", end="")
+        lib_version = importlib.metadata.version("pyapp-cli")
+        self._logger.log(f"PyApp CLI version: {Fore.CYAN + lib_version}")
 
     def _escape_project_path(self, path: str) -> str:
         result = path

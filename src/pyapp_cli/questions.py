@@ -57,12 +57,10 @@ class Questions:
             ).execute()
 
         if package_manager is None:
-            package_manager = (
-                inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
-                    message="Choose the package manager",
-                    choices=package_manager_choices,
-                ).execute()
-            )
+            package_manager = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
+                message="Choose the package manager",
+                choices=package_manager_choices,
+            ).execute()
 
         if python_version is None:
             python_version = inquirer.text(  # pyright: ignore[reportPrivateImportUsage]
@@ -71,12 +69,10 @@ class Questions:
             ).execute()
 
         if source_folder is None:
-            source_folder = (
-                inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
-                    message="Choose the source code folder",
-                    choices=source_folder_choices,
-                ).execute()
-            )
+            source_folder = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
+                message="Choose the source code folder",
+                choices=source_folder_choices,
+            ).execute()
 
         if framework is None:
             framework = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
