@@ -4,6 +4,7 @@ import typer
 
 from .libraries import LibrariesGenerator
 from .logger import Logger
+from .project_generator import ProjectGenerator
 from .prompt_handler import PromptHandler
 from .pyapp_cli import PyAppCLI
 from .schemas import Framework, PackageManager, SourceFolder
@@ -15,7 +16,10 @@ prompts = PromptHandler(
 
 cli = PyAppCLI(
     logger=Logger(),
-    prompt_handler=prompts,
+    project_generator=ProjectGenerator(
+        logger=Logger(),
+        prompt_handler=prompts,
+    ),
 )
 
 
