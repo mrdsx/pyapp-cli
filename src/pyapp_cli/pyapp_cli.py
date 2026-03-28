@@ -10,7 +10,7 @@ from colorama import Fore
 from pydantic import ValidationError
 
 from .logger import Logger
-from .questions import Questions
+from .prompt_handler import PromptHandler
 from .schemas import Answers, Framework, PackageManager, SourceFolder
 from .templates import templates
 
@@ -22,11 +22,11 @@ class PyAppCLI:
     _no_cli_frameworks: set[Framework] = set(["fastapi", "flask"])
     _stdout: int | None
     _logger: Logger
-    _questions: Questions
+    _prompt_handler: PromptHandler
 
-    def __init__(self, logger: Logger, questions: Questions) -> None:
+    def __init__(self, logger: Logger, prompt_handler: PromptHandler) -> None:
         self._logger = logger
-        self._questions = questions
+        self._prompt_handler = prompt_handler
 
     def init(
         self,
@@ -45,7 +45,7 @@ class PyAppCLI:
         self._logger.debug(f"Verbose logging: {self._logger.verbose}")
 
         try:
-            raw_answers = self._questions.prompt(
+            raw_answers = self._prompt_handler.prompt(
                 project_path=project_path,
                 package_manager=package_manager,
                 python_version=python_version,

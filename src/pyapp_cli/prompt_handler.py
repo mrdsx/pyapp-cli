@@ -1,8 +1,9 @@
-from typing import Any, Literal, Union
+from typing import Any, Literal
 
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
-from InquirerPy.separator import Separator
+
+from pyapp_cli.libraries import LibrariesGenerator
 
 from .schemas import Framework, PackageManager, SourceFolder
 
@@ -22,35 +23,14 @@ frameworks_choices: list[Choice] = [
     Choice(value="flask", name="Flask"),
     Choice(value="django", name="Django"),
 ]
-libraries_choices: list[Union[str, Separator]] = [
-    "gunicorn",
-    "uvicorn",
-    Separator(),
-    "aiosqlite",
-    "psycopg",
-    "asyncpg",
-    "mysql-connector-python",
-    "pymongo",
-    Separator(),
-    "sqlalchemy",
-    "sqlmodel",
-    "tortoise-orm",
-    "firebase-admin",
-    "supabase",
-    Separator(),
-    "pydantic",
-    "pydantic-settings",
-    "pytest",
-    "pytest-asyncio",
-    Separator(),
-    "ruff",
-    "black",
-    "flake8",
-    "pylint",
-]
 
 
-class Questions:
+class PromptHandler:
+    _libraries_generator: LibrariesGenerator
+
+    def __init__(self, libraries_generator: LibrariesGenerator) -> None:
+        self._libraries_generator = libraries_generator
+
     def prompt(
         self,
         project_path: str | None,
@@ -101,11 +81,14 @@ class Questions:
         elif no_libraries is True and libraries is None:
             _libraries = []
         elif no_libraries is None and libraries is None:
+            libraries_choices = self._libraries_generator.get_libraries_choices(
+                framework
+            )
             _libraries = inquirer.checkbox(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the libraries",
                 choices=libraries_choices,
                 long_instruction="(You can add more by providing `--libraries` argument to `init` command)",
-                height=10,
+                max_height=10,
                 cycle=False,
                 show_cursor=False,
             ).execute()

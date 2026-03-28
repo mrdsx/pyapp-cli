@@ -2,13 +2,21 @@ from typing import Literal
 
 import typer
 
+from .libraries import LibrariesGenerator
 from .logger import Logger
+from .prompt_handler import PromptHandler
 from .pyapp_cli import PyAppCLI
-from .questions import Questions
 from .schemas import Framework, PackageManager, SourceFolder
 
 app = typer.Typer()
-cli = PyAppCLI(logger=Logger(), questions=Questions())
+prompts = PromptHandler(
+    libraries_generator=LibrariesGenerator(),
+)
+
+cli = PyAppCLI(
+    logger=Logger(),
+    prompt_handler=prompts,
+)
 
 
 @app.command()
