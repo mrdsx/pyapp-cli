@@ -70,6 +70,7 @@ class Questions:
             package_manager = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the package manager",
                 choices=package_manager_choices,
+                show_cursor=False,
             ).execute()
 
         if python_version is None:
@@ -82,12 +83,14 @@ class Questions:
             source_folder = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the source code folder",
                 choices=source_folder_choices,
+                show_cursor=False,
             ).execute()
 
         if framework is None:
             framework = inquirer.select(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the framework",
                 choices=frameworks_choices,
+                show_cursor=False,
             ).execute()
 
         _libraries = libraries
@@ -101,6 +104,10 @@ class Questions:
             _libraries = inquirer.checkbox(  # pyright: ignore[reportPrivateImportUsage]
                 message="Choose the libraries",
                 choices=libraries_choices,
+                long_instruction="(You can add more by providing `--libraries` argument to `init` command)",
+                height=10,
+                cycle=False,
+                show_cursor=False,
             ).execute()
         elif no_libraries is None and type(libraries) is str:
             _libraries = libraries.split(",")
