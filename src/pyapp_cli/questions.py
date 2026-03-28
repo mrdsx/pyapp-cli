@@ -1,26 +1,36 @@
 from typing import Any, Literal, Union
 
 from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 
 from .schemas import Framework, PackageManager, SourceFolder
 
-package_manager_choices: list[str] = ["pip", "poetry", "uv"]
-source_folder_choices: list[dict[str, str]] = [
-    {"value": "root", "name": "root folder"},
-    {"value": "src", "name": "./src"},
-    {"value": "app", "name": "./app"},
+package_manager_choices: list[str] = [
+    "pip",
+    "poetry",
+    "uv",
 ]
-frameworks_choices: list[dict[str, str | None]] = [
-    {"value": None, "name": "None"},
-    {"value": "fastapi", "name": "FastAPI"},
-    {"value": "flask", "name": "Flask"},
-    {"value": "django", "name": "Django"},
+source_folder_choices: list[Choice] = [
+    Choice(value="root", name="root folder"),
+    Choice(value="src", name="./src"),
+    Choice(value="app", name="./app"),
+]
+frameworks_choices: list[Choice] = [
+    Choice(value=None, name="None"),
+    Choice(value="fastapi", name="FastAPI"),
+    Choice(value="flask", name="Flask"),
+    Choice(value="django", name="Django"),
 ]
 libraries_choices: list[Union[str, Separator]] = [
-    Separator(),
     "gunicorn",
     "uvicorn",
+    Separator(),
+    "aiosqlite",
+    "psycopg",
+    "asyncpg",
+    "mysql-connector-python",
+    "pymongo",
     Separator(),
     "sqlalchemy",
     "sqlmodel",
