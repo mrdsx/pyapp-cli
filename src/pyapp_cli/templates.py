@@ -1,4 +1,5 @@
-fastapi_template = """from fastapi import FastAPI
+fastapi_template = """\
+from fastapi import FastAPI
 
 app = FastAPI()
 
@@ -8,7 +9,8 @@ def read_root():
     return "Hello, World!"
 """
 
-flask_template = """from flask import Flask
+flask_template = """\
+from flask import Flask
 
 app = Flask(__name__)
 
