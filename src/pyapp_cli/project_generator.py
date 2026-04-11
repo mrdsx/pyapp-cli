@@ -70,6 +70,7 @@ class ProjectGenerator:
 
         escaped_path = self._escape_project_path(answers.project_path)
         self._create_project_folder(escaped_path, answers.source_folder)
+        self._create_gitignore_file()
 
         if answers.framework is None or answers.framework in self._no_cli_frameworks:
             self._create_main_file(answers.source_folder, answers.framework)
@@ -130,6 +131,11 @@ class ProjectGenerator:
         os.chdir(project_path)
         self._logger.log(f"Created folder '{project_path}'")
 
+    def _create_gitignore_file(self) -> None:
+        with open(".gitignore", "w") as file:
+            file.write(templates["gitignore"])
+        self._logger.log("Created .gitignore file")
+
     def _ensure_pip_installation(self) -> None:
         pip_exists = shutil.which("pip") is not None
         if pip_exists:
@@ -166,9 +172,9 @@ class ProjectGenerator:
         self._logger.log("Added main.py")
 
         project_template = templates.get(framework or "")
-        with open(python_file, "w") as f:
+        with open(python_file, "w") as file:
             if project_template is not None:
-                f.write(project_template)
+                file.write(project_template)
                 self._logger.debug(f"Created {framework} template")
 
     def _pip_setup_project(self, dependencies: list[str]) -> None:
@@ -196,8 +202,8 @@ class ProjectGenerator:
                 capture_output=True,
                 text=True,
             )
-            with open("requirements.txt", "w") as f:
-                f.write(result.stdout)
+            with open("requirements.txt", "w") as file:
+                file.write(result.stdout)
             self._logger.success("Saved dependencies to requirements.txt")
 
     def _poetry_setup_project(
@@ -238,8 +244,8 @@ class ProjectGenerator:
             stdout=self._stdout,
             stderr=self._stdout,
         )
-        with open(".python-version", "w") as f:
-            f.write(python_version)
+        with open(".python-version", "w") as file:
+            file.write(python_version)
         self._logger.log("Initialized uv project")
 
         if len(dependencies) > 0:
