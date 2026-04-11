@@ -52,7 +52,7 @@ class ProjectGenerator:
                 libraries=libraries,
                 no_libraries=no_libraries,
             )
-            answers = Answers(**raw_answers)
+            answers = Answers.model_validate(raw_answers)
         except (TypeError, ValidationError) as error:
             self._logger.error("Invalid project params")
             self._logger.debug(f"Error: {error}")
