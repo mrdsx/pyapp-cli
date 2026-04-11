@@ -6,7 +6,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return "Hello, World!"
+    return {"status": "ok"}
 """
 
 flask_template = """\
@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 @app.get("/")
 def hello_world():
-    return "Hello, World!"
+    return {"status": "ok"}
 """
 
 templates = {
