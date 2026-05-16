@@ -49,8 +49,8 @@ Sets up new Python project.
 
 ##### `--python-version` - **string**
 
-- default: 3.12
-- example: `uvx pyapp-cli init --python-version=3.12`
+- default: 3.14
+- example: `uvx pyapp-cli init --python-version=3.14`
 
 ##### `--source-folder` - **string**
 

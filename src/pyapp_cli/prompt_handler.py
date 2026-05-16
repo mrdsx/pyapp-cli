@@ -56,7 +56,7 @@ class PromptHandler:
         if python_version is None:
             python_version = inquirer.text(  # pyright: ignore[reportPrivateImportUsage]
                 message="Enter Python version",
-                default="3.12",
+                default="3.14",
             ).execute()
 
         if source_folder is None:
