@@ -23,6 +23,7 @@ def hello_world():
 gitignore_template = """\
 # Python-generated files
 __pycache__/
+.ropeproject/
 .venv/
 build/
 dist/
@@ -33,6 +34,7 @@ dist/
 .env
 
 # Databases
+cron_state*
 *.sqlite
 *.db
 
